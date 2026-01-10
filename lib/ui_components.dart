@@ -440,17 +440,3 @@ class SettingsSheet extends StatelessWidget {
     );
   }
 }
-
-// Add this method to LearningProvider in main.dart
-extension LearningProviderExtension on LearningProvider {
-  void resetProgress() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    _streak = 0;
-    _totalReviewed = 0;
-    _todayCount = 0;
-    _lastReviewDate = null;
-    _progress.clear();
-    notifyListeners();
-  }
-}
