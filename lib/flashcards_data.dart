@@ -1,7 +1,7 @@
 import 'main.dart';
 
 // MEDIZIN & ERSTE HILFE (40+ Karten)
-final List<FlashCard> _medizinCards = [
+final List<FlashCard> medizinCards = [
   FlashCard(
     category: 'Medizin',
     question: 'Was sind die Symptome eines Herzinfarkts?',
@@ -155,7 +155,7 @@ final List<FlashCard> _medizinCards = [
 ];
 
 // ALLGEMEINWISSEN (50+ Karten)
-final List<FlashCard> _allgemeinwissenCards = [
+final List<FlashCard> allgemeinwissenCards = [
   FlashCard(
     category: 'Allgemeinwissen',
     question: 'Wie viele Bundesländer hat Deutschland?',
@@ -284,7 +284,7 @@ final List<FlashCard> _allgemeinwissenCards = [
 ];
 
 // GESCHICHTE (30+ Karten) - continued in next message due to length
-final List<FlashCard> _geschichteCards = [
+final List<FlashCard> geschichteCards = [
   FlashCard(
     category: 'Geschichte',
     question: 'Wann war die Reformation?',
@@ -338,7 +338,7 @@ final List<FlashCard> _geschichteCards = [
 ];
 
 // PHYSIK (25+ Karten)
-final List<FlashCard> _physikCards = [
+final List<FlashCard> physikCards = [
   FlashCard(
     category: 'Physik',
     question: 'Warum ist der Himmel blau?',
@@ -382,7 +382,7 @@ final List<FlashCard> _physikCards = [
 ];
 
 // COWBOYS (15 Karten)
-final List<FlashCard> _cowboysCards = [
+final List<FlashCard> cowboysCards = [
   FlashCard(
     category: 'Cowboys',
     question: 'Blütezeit der Cowboys?',
@@ -431,7 +431,7 @@ final List<FlashCard> _cowboysCards = [
 ];
 
 // KULTUR (20+ Karten)
-final List<FlashCard> _kulturCards = [
+final List<FlashCard> kulturCards = [
   FlashCard(
     category: 'Kultur',
     question: 'Wer schrieb "Faust"?',
@@ -460,7 +460,7 @@ final List<FlashCard> _kulturCards = [
 ];
 
 // WIRTSCHAFT (20+ Karten)
-final List<FlashCard> _wirtschaftCards = [
+final List<FlashCard> wirtschaftCards = [
   FlashCard(
     category: 'Wirtschaft',
     question: 'Was ist BIP?',
@@ -489,7 +489,7 @@ final List<FlashCard> _wirtschaftCards = [
 ];
 
 // TECHNIK (15+ Karten)
-final List<FlashCard> _technikCards = [
+final List<FlashCard> technikCards = [
   FlashCard(
     category: 'Technik',
     question: 'Wie funktioniert WLAN?',
