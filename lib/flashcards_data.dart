@@ -411,7 +411,7 @@ final List<FlashCard> _cowboysCards = [
   FlashCard(
     category: 'Cowboys',
     question: 'Wilder Westen - wo und wann?',
-    answer: 'Westlich des Mississippi\n~1867-1890\n\n• Goldrausch 1848\n• Homestead Act: 160 Acres für 10$\n• Konflikte mit Natives',
+    answer: 'Westlich des Mississippi\n~1867-1890\n\n• Goldrausch 1848\n• Homestead Act: 160 Acres für 10\$\n• Konflikte mit Natives',
   ),
   FlashCard(
     category: 'Cowboys',
