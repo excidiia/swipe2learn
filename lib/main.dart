@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
+import 'flashcards_data.dart';
+import 'ui_components.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
