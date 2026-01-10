@@ -1,0 +1,38 @@
+name: wissens_swiper
+description: TikTok-style learning app with spaced repetition
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # UI & Animations
+  cupertino_icons: ^1.0.2
+  flutter_card_swiper: ^6.0.0
+  flutter_staggered_animations: ^1.1.1
+  
+  # State Management & Storage
+  shared_preferences: ^2.2.2
+  provider: ^6.1.1
+  
+  # Utilities
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
+        - asset: fonts/Roboto-Bold.ttf
+          weight: 700
