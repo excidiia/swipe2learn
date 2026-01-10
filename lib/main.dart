@@ -36,22 +36,19 @@ class WissensSwiper extends StatelessWidget {
         scaffoldBackgroundColor: Colors.black,
         fontFamily: 'Roboto',
       ),
-      home: const HomeScreen(),
+      home: const CategorySelectionScreen(),
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class CategorySelectionScreen extends StatefulWidget {
+  const CategorySelectionScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<CategorySelectionScreen> createState() => _CategorySelectionScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  final PageController _pageController = PageController();
-  int _currentIndex = 0;
-
+class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   @override
   void initState() {
     super.initState();
@@ -60,110 +57,279 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<LearningProvider>(context);
+    
     return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        scrollDirection: Axis.vertical,
-        onPageChanged: (index) {
-          setState(() => _currentIndex = index);
-          Provider.of<LearningProvider>(context, listen: false)
-              .markCardViewed(index);
-        },
-        children: List.generate(
-          Provider.of<LearningProvider>(context).cards.length,
-          (index) => SwipeCard(
-            card: Provider.of<LearningProvider>(context).cards[index],
-            cardIndex: index,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.deepPurple.shade900,
+              Colors.black,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+              const Text(
+                '🧠 Wissens-Swiper',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '200+ Karteikarten • Spaced Repetition',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white60,
+                ),
+              ),
+              const SizedBox(height: 40),
+              
+              // Stats Row
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildStatBadge('🔥', '${provider.streak}', 'Streak'),
+                    _buildStatBadge('✅', '${provider.todayCount}', 'Heute'),
+                    _buildStatBadge('📚', '${provider.totalReviewed}', 'Gesamt'),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 40),
+              
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  children: [
+                    _buildCategoryCard(
+                      context,
+                      '🎲 Alle gemischt',
+                      '${provider.cards.length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                      ),
+                      null, // null = alle Kategorien
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCategoryCard(
+                      context,
+                      '🏥 Medizin',
+                      '${provider.getCardsForCategory('Medizin').length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFFE74C3C), Color(0xFF8E44AD)],
+                      ),
+                      'Medizin',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCategoryCard(
+                      context,
+                      '🌍 Allgemeinwissen',
+                      '${provider.getCardsForCategory('Allgemeinwissen').length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFF3498DB), Color(0xFF2980B9)],
+                      ),
+                      'Allgemeinwissen',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCategoryCard(
+                      context,
+                      '📜 Geschichte',
+                      '${provider.getCardsForCategory('Geschichte').length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFFE67E22), Color(0xFFD35400)],
+                      ),
+                      'Geschichte',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCategoryCard(
+                      context,
+                      '⚛️ Physik',
+                      '${provider.getCardsForCategory('Physik').length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFF16A085), Color(0xFF1ABC9C)],
+                      ),
+                      'Physik',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCategoryCard(
+                      context,
+                      '🤠 Cowboys',
+                      '${provider.getCardsForCategory('Cowboys').length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFFD35400), Color(0xFFE67E22)],
+                      ),
+                      'Cowboys',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCategoryCard(
+                      context,
+                      '🎭 Kultur',
+                      '${provider.getCardsForCategory('Kultur').length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFF9B59B6), Color(0xFF8E44AD)],
+                      ),
+                      'Kultur',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCategoryCard(
+                      context,
+                      '💼 Wirtschaft',
+                      '${provider.getCardsForCategory('Wirtschaft').length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFF27AE60), Color(0xFF229954)],
+                      ),
+                      'Wirtschaft',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCategoryCard(
+                      context,
+                      '⚙️ Technik',
+                      '${provider.getCardsForCategory('Technik').length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFF34495E), Color(0xFF2C3E50)],
+                      ),
+                      'Technik',
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              
+              // Settings Button
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: OutlinedButton.icon(
+                  onPressed: () => _showSettings(context),
+                  icon: const Icon(Icons.settings, color: Colors.white70),
+                  label: const Text(
+                    'Einstellungen',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.white30),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(),
     );
   }
 
-  Widget _buildBottomBar() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            Colors.black.withOpacity(0.8),
-          ],
+  Widget _buildStatBadge(String emoji, String value, String label) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 24)),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: Colors.white60,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: SafeArea(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(Icons.home, 'Home', 0),
-            _buildNavItem(Icons.category, 'Kategorien', 1),
-            _buildNavItem(Icons.bar_chart, 'Stats', 2),
-            _buildNavItem(Icons.settings, 'Einstellungen', 3),
-          ],
-        ),
-      ),
+      ],
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
-    final isSelected = _currentIndex == index;
+  Widget _buildCategoryCard(
+    BuildContext context,
+    String title,
+    String subtitle,
+    LinearGradient gradient,
+    String? category,
+  ) {
     return GestureDetector(
       onTap: () {
-        if (index == 2) {
-          _showStats();
-        } else if (index == 1) {
-          _showCategories();
-        } else if (index == 3) {
-          _showSettings();
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CardSwipeScreen(category: category),
+          ),
+        );
       },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isSelected ? Colors.white : Colors.white60,
-            size: 28,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.white60,
-              fontSize: 10,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.white,
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void _showStats() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.grey[900],
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => const StatsSheet(),
-    );
-  }
-
-  void _showCategories() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.grey[900],
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => const CategorySheet(),
-    );
-  }
-
-  void _showSettings() {
+  void _showSettings(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.grey[900],
@@ -171,6 +337,106 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => const SettingsSheet(),
+    );
+  }
+}
+
+class CardSwipeScreen extends StatefulWidget {
+  final String? category;
+
+  const CardSwipeScreen({super.key, this.category});
+
+  @override
+  State<CardSwipeScreen> createState() => _CardSwipeScreenState();
+}
+
+class _CardSwipeScreenState extends State<CardSwipeScreen> {
+  final PageController _pageController = PageController();
+  int _currentIndex = 0;
+  late List<FlashCard> _cards;
+
+  @override
+  void initState() {
+    super.initState();
+    final provider = Provider.of<LearningProvider>(context, listen: false);
+    
+    if (widget.category == null) {
+      // Alle Karten gemischt
+      _cards = List.from(provider.cards)..shuffle(Random());
+    } else {
+      // Nur diese Kategorie
+      _cards = provider.getCardsForCategory(widget.category!);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Cards
+          PageView.builder(
+            controller: _pageController,
+            scrollDirection: Axis.vertical,
+            onPageChanged: (index) {
+              setState(() => _currentIndex = index);
+              Provider.of<LearningProvider>(context, listen: false)
+                  .markCardViewed(index);
+            },
+            itemCount: _cards.length,
+            itemBuilder: (context, index) => SwipeCard(
+              card: _cards[index],
+              cardIndex: index,
+            ),
+          ),
+          
+          // Back Button
+          Positioned(
+            top: 50,
+            left: 20,
+            child: SafeArea(
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
+          // Progress Indicator
+          Positioned(
+            top: 50,
+            right: 20,
+            child: SafeArea(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${_currentIndex + 1} / ${_cards.length}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -348,23 +614,26 @@ class _SwipeCardState extends State<SwipeCard>
                   ),
                 ),
               Positioned(
-                top: 60,
-                right: 20,
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.arrow_upward,
-                      color: Colors.white60,
-                      size: 20,
-                    ),
-                    const Text(
-                      'Weiter',
-                      style: TextStyle(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.arrow_upward,
                         color: Colors.white60,
-                        fontSize: 12,
+                        size: 20,
                       ),
-                    ),
-                  ],
+                      const Text(
+                        'Nächste Karte',
+                        style: TextStyle(
+                          color: Colors.white60,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -557,7 +826,12 @@ class LearningProvider extends ChangeNotifier {
 
   void _initializeCards() {
     _cards = _generateAllCards();
-    _cards.shuffle(Random());
+  }
+
+  List<FlashCard> getCardsForCategory(String category) {
+    return _cards.where((card) => 
+      card.category.toLowerCase() == category.toLowerCase()
+    ).toList();
   }
 
   Future<void> loadProgress() async {
