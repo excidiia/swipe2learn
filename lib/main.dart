@@ -34,7 +34,6 @@ class WissensSwiper extends StatelessWidget {
         primarySwatch: Colors.deepPurple,
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.black,
-        fontFamily: 'Roboto',
       ),
       home: const CategorySelectionScreen(),
     );
@@ -84,8 +83,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                '200+ Karteikarten • Spaced Repetition',
+              const Text(
+                'Lerne mit System',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.white60,
@@ -119,7 +118,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                       const LinearGradient(
                         colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
                       ),
-                      null, // null = alle Kategorien
+                      null,
                     ),
                     const SizedBox(height: 16),
                     _buildCategoryCard(
@@ -144,22 +143,22 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                     const SizedBox(height: 16),
                     _buildCategoryCard(
                       context,
+                      '🔬 Naturwissenschaften',
+                      '${provider.getCardsForCategory('Naturwissenschaften').length} Karten',
+                      const LinearGradient(
+                        colors: [Color(0xFF16A085), Color(0xFF1ABC9C)],
+                      ),
+                      'Naturwissenschaften',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCategoryCard(
+                      context,
                       '📜 Geschichte',
                       '${provider.getCardsForCategory('Geschichte').length} Karten',
                       const LinearGradient(
                         colors: [Color(0xFFE67E22), Color(0xFFD35400)],
                       ),
                       'Geschichte',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildCategoryCard(
-                      context,
-                      '⚛️ Physik',
-                      '${provider.getCardsForCategory('Physik').length} Karten',
-                      const LinearGradient(
-                        colors: [Color(0xFF16A085), Color(0xFF1ABC9C)],
-                      ),
-                      'Physik',
                     ),
                     const SizedBox(height: 16),
                     _buildCategoryCard(
@@ -230,37 +229,33 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   }
 
   Widget _buildStatBadge(String emoji, String value, String label) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 24)),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-          child: Column(
-            children: [
-              Text(emoji, style: const TextStyle(fontSize: 24)),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: Colors.white60,
-                ),
-              ),
-            ],
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.white60,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -353,7 +348,7 @@ class CardSwipeScreen extends StatefulWidget {
 class _CardSwipeScreenState extends State<CardSwipeScreen> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-  late List<FlashCard> _cards;
+  late List<EnhancedFlashCard> _cards;
 
   @override
   void initState() {
@@ -361,11 +356,9 @@ class _CardSwipeScreenState extends State<CardSwipeScreen> {
     final provider = Provider.of<LearningProvider>(context, listen: false);
     
     if (widget.category == null) {
-      // Alle Karten gemischt
-      _cards = List.from(provider.cards)..shuffle(Random());
+      _cards = provider.getAllEnhancedCards()..shuffle(Random());
     } else {
-      // Nur diese Kategorie
-      _cards = provider.getCardsForCategory(widget.category!);
+      _cards = provider.getEnhancedCardsForCategory(widget.category!);
     }
   }
 
@@ -374,23 +367,19 @@ class _CardSwipeScreenState extends State<CardSwipeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Cards
           PageView.builder(
             controller: _pageController,
             scrollDirection: Axis.vertical,
             onPageChanged: (index) {
               setState(() => _currentIndex = index);
-              Provider.of<LearningProvider>(context, listen: false)
-                  .markCardViewed(index);
             },
             itemCount: _cards.length,
-            itemBuilder: (context, index) => SwipeCard(
+            itemBuilder: (context, index) => EnhancedSwipeCard(
               card: _cards[index],
               cardIndex: index,
             ),
           ),
           
-          // Back Button
           Positioned(
             top: 50,
             left: 20,
@@ -413,7 +402,6 @@ class _CardSwipeScreenState extends State<CardSwipeScreen> {
             ),
           ),
           
-          // Progress Indicator
           Positioned(
             top: 50,
             right: 20,
@@ -441,25 +429,28 @@ class _CardSwipeScreenState extends State<CardSwipeScreen> {
   }
 }
 
-class SwipeCard extends StatefulWidget {
-  final FlashCard card;
+// ENHANCED SWIPE CARD with Info Button
+class EnhancedSwipeCard extends StatefulWidget {
+  final EnhancedFlashCard card;
   final int cardIndex;
 
-  const SwipeCard({
+  const EnhancedSwipeCard({
     super.key,
     required this.card,
     required this.cardIndex,
   });
 
   @override
-  State<SwipeCard> createState() => _SwipeCardState();
+  State<EnhancedSwipeCard> createState() => _EnhancedSwipeCardState();
 }
 
-class _SwipeCardState extends State<SwipeCard>
+class _EnhancedSwipeCardState extends State<EnhancedSwipeCard>
     with SingleTickerProviderStateMixin {
   bool _showAnswer = false;
+  bool _showDetails = false;
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -474,18 +465,35 @@ class _SwipeCardState extends State<SwipeCard>
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   void _toggleAnswer() {
+    if (_showAnswer) return;
     setState(() {
-      _showAnswer = !_showAnswer;
-      if (_showAnswer) {
-        _controller.forward();
-      } else {
-        _controller.reverse();
-      }
+      _showAnswer = true;
+      _showDetails = false;
+      _controller.forward();
     });
+  }
+
+  void _toggleDetails() {
+    setState(() {
+      _showDetails = !_showDetails;
+    });
+    
+    if (_showDetails && widget.card.detailAnswer != null) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
   }
 
   @override
@@ -500,11 +508,14 @@ class _SwipeCardState extends State<SwipeCard>
           child: Stack(
             children: [
               Positioned.fill(
-                child: Padding(
+                child: SingleChildScrollView(
+                  controller: _scrollController,
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      const SizedBox(height: 60),
+                      
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -525,17 +536,20 @@ class _SwipeCardState extends State<SwipeCard>
                           ),
                         ),
                       ),
+                      
                       const SizedBox(height: 40),
+                      
                       Text(
                         widget.card.question,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 28,
+                          fontSize: 26,
                           fontWeight: FontWeight.bold,
                           height: 1.4,
                         ),
                       ),
+                      
                       if (!_showAnswer) ...[
                         const SizedBox(height: 40),
                         const Icon(
@@ -552,28 +566,137 @@ class _SwipeCardState extends State<SwipeCard>
                           ),
                         ),
                       ],
+                      
                       if (_showAnswer)
                         FadeTransition(
                           opacity: _fadeAnimation,
                           child: Column(
                             children: [
                               const SizedBox(height: 40),
+                              
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Text(
-                                  widget.card.answer,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    height: 1.6,
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.3),
+                                    width: 1,
                                   ),
                                 ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      widget.card.shortAnswer,
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        height: 1.6,
+                                      ),
+                                    ),
+                                    
+                                    if (widget.card.detailAnswer != null) ...[
+                                      const SizedBox(height: 16),
+                                      const Divider(color: Colors.white30),
+                                      const SizedBox(height: 8),
+                                      GestureDetector(
+                                        onTap: _toggleDetails,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(0.2),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                _showDetails
+                                                    ? Icons.info
+                                                    : Icons.info_outline,
+                                                color: Colors.white,
+                                                size: 18,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                _showDetails
+                                                    ? 'Details ausblenden'
+                                                    : 'Mehr erfahren',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
                               ),
+                              
+                              if (_showDetails && widget.card.detailAnswer != null) ...[
+                                const SizedBox(height: 20),
+                                Container(
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.2),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withOpacity(0.2),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.school,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          const Text(
+                                            'Ausführliche Erklärung',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        widget.card.detailAnswer!,
+                                        textAlign: TextAlign.left,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          height: 1.8,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                              
+                              const SizedBox(height: 140),
                             ],
                           ),
                         ),
@@ -581,9 +704,10 @@ class _SwipeCardState extends State<SwipeCard>
                   ),
                 ),
               ),
-              if (_showAnswer)
+              
+              if (_showAnswer && !_showDetails)
                 Positioned(
-                  bottom: 100,
+                  bottom: 80,
                   left: 0,
                   right: 0,
                   child: FadeTransition(
@@ -613,29 +737,31 @@ class _SwipeCardState extends State<SwipeCard>
                     ),
                   ),
                 ),
-              Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.arrow_upward,
-                        color: Colors.white60,
-                        size: 20,
-                      ),
-                      const Text(
-                        'Nächste Karte',
-                        style: TextStyle(
+              
+              if (!_showDetails)
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Column(
+                      children: const [
+                        Icon(
+                          Icons.arrow_upward,
                           color: Colors.white60,
-                          fontSize: 12,
+                          size: 20,
                         ),
-                      ),
-                    ],
+                        Text(
+                          'Nächste Karte',
+                          style: TextStyle(
+                            color: Colors.white60,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -652,8 +778,8 @@ class _SwipeCardState extends State<SwipeCard>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 80,
-        height: 80,
+        width: 75,
+        height: 75,
         decoration: BoxDecoration(
           color: color.withOpacity(0.9),
           shape: BoxShape.circle,
@@ -668,13 +794,13 @@ class _SwipeCardState extends State<SwipeCard>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 32),
+            Icon(icon, color: Colors.white, size: 28),
             const SizedBox(height: 4),
             Text(
               label,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 10,
+                fontSize: 9,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -704,6 +830,7 @@ class _SwipeCardState extends State<SwipeCard>
 
     setState(() {
       _showAnswer = false;
+      _showDetails = false;
       _controller.reverse();
     });
   }
@@ -728,7 +855,7 @@ class _SwipeCardState extends State<SwipeCard>
           end: Alignment.bottomRight,
           colors: [Color(0xFFE67E22), Color(0xFFD35400)],
         );
-      case 'physik':
+      case 'naturwissenschaften':
         return const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -775,8 +902,8 @@ class _SwipeCardState extends State<SwipeCard>
         return '🌍';
       case 'geschichte':
         return '📜';
-      case 'physik':
-        return '⚛️';
+      case 'naturwissenschaften':
+        return '🔬';
       case 'cowboys':
         return '🤠';
       case 'kultur':
@@ -791,25 +918,21 @@ class _SwipeCardState extends State<SwipeCard>
   }
 }
 
+// MODELS
 class FlashCard {
   final String category;
   final String question;
   final String answer;
-  final String? difficulty;
-  final List<String>? tags;
 
   FlashCard({
     required this.category,
     required this.question,
     required this.answer,
-    this.difficulty,
-    this.tags,
   });
 }
 
 class LearningProvider extends ChangeNotifier {
   List<FlashCard> _cards = [];
-  Map<int, CardProgress> _progress = {};
   int _streak = 0;
   int _totalReviewed = 0;
   int _todayCount = 0;
@@ -830,6 +953,20 @@ class LearningProvider extends ChangeNotifier {
 
   List<FlashCard> getCardsForCategory(String category) {
     return _cards.where((card) => 
+      card.category.toLowerCase() == category.toLowerCase()
+    ).toList();
+  }
+
+  List<EnhancedFlashCard> getAllEnhancedCards() {
+    return [
+      ...medizinCardsEnhanced,
+      ...allgemeinwissenCardsEnhanced,
+      ...naturwissenschaftenCardsEnhanced,
+    ];
+  }
+
+  List<EnhancedFlashCard> getEnhancedCardsForCategory(String category) {
+    return getAllEnhancedCards().where((card) => 
       card.category.toLowerCase() == category.toLowerCase()
     ).toList();
   }
@@ -879,10 +1016,6 @@ class LearningProvider extends ChangeNotifier {
     }
   }
 
-  void markCardViewed(int index) {
-    // Just tracking views
-  }
-
   void rateCard(int index, String difficulty) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -911,7 +1044,6 @@ class LearningProvider extends ChangeNotifier {
     _totalReviewed = 0;
     _todayCount = 0;
     _lastReviewDate = null;
-    _progress.clear();
     notifyListeners();
   }
 
@@ -919,26 +1051,12 @@ class LearningProvider extends ChangeNotifier {
     return [
       ...medizinCards,
       ...allgemeinwissenCards,
-      ...geschichteCards,
       ...physikCards,
+      ...geschichteCards,
       ...cowboysCards,
       ...kulturCards,
       ...wirtschaftCards,
       ...technikCards,
     ];
   }
-}
-
-class CardProgress {
-  DateTime nextReview;
-  int interval;
-  double easeFactor;
-  int reviewCount;
-
-  CardProgress({
-    required this.nextReview,
-    this.interval = 1,
-    this.easeFactor = 2.5,
-    this.reviewCount = 0,
-  });
 }
