@@ -888,7 +888,7 @@ final List<FlashCard> wirtschaftCards = [
   FlashCard(category: 'Wirtschaft', question: 'Monopol?', answer: 'Ein Anbieter\nKeine Konkurrenz\nKann Preise diktieren\nVerboten oft'),
   FlashCard(category: 'Wirtschaft', question: 'Kartell?', answer: 'Firmen sprechen ab\nPreise, Marktaufteilung\nIllegal!\nBußgelder'),
   FlashCard(category: 'Wirtschaft', question: 'StartUp?', answer: 'Junges Unternehmen\nInnovation\nSkalierbares Modell\nRisikokapital'),
-  FlashCard(category: 'Wirtschaft', question: 'Unicorn?', answer: 'StartUp >1 Mrd $ Wert\nSelten wie Einhorn\nBerlin: N26, Zalando'),
+  FlashCard(category: 'Wirtschaft', question: 'Unicorn?', answer: 'StartUp >1 Mrd \$ Wert\nSelten wie Einhorn\nBerlin: N26, Zalando'),
   FlashCard(category: 'Wirtschaft', question: 'Venture Capital?', answer: 'Risikokapital\nFür StartUps\nBeteiligung\nExit = Verkauf'),
   FlashCard(category: 'Wirtschaft', question: 'Börsengang (IPO)?', answer: 'Initial Public Offering\nAktien öffentlich\nKapital sammeln\nTransparenz nötig'),
   FlashCard(category: 'Wirtschaft', question: 'Bitcoin?', answer: 'Kryptowährung\nDezentral\nBlockchain\nSehr volatil'),
